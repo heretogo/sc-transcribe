@@ -1,0 +1,8 @@
+(
+  \author: "James Annett",
+  \name: "sc-transcribe",
+  \schelp: "sc-transcribe",
+  \since: "2021",
+  \summary: "Pitch to MIDI",
+  \version: "1.0.0"
+)

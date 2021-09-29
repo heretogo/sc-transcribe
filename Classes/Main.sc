@@ -8,7 +8,6 @@ Transcription {
   }
 
   init {
-    s.reboot;
     s.waitForBoot {
       "Initialize Main NewClass".postln;
       Task {
@@ -23,6 +22,16 @@ Transcription {
 
   loadSynthDefs {
     "Loading SynthDefs".postln;
+
+    (
+      SynthDef(\pitchfollower, { |out, vol=1.0, buf|
+        var freq, hasFreq, in, sound, sum;
+        in = PlayBuf.ar(numChannels: 2, bufnum: buf, rate: BufRateScale.kr(buf), trigger: 1, startPos: 0, loop: 1);
+        sum = Mix.new(in);
+        # freq, hasFreq = Tartini.kr(in);
+        SendReply.kr(trig: Changed.kr(freq), cmdName: '/transcribe', values: freq);
+      }).add
+    );
 
     SynthDef(\pitchfollowerBuffer, { |out, vol=1.0, buf, rate=60|
       var chain, onset, freq, hasFreq, in, trig;

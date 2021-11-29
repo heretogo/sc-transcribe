@@ -44,7 +44,17 @@ Transcription {
       Out.ar(0, in);
     }).add;
 
-    //try FluidPitch
+    SynthDef(\fluidPitchFollow, { |out, vol=1.0, buf, rate=60|
+      var chain, onset, freq, confidence, in, trig;
+      in = PlayBuf.ar(numChannels: 2, bufnum: buf, rate: 1, trigger: 1, startPos: 0, loop: 0, doneAction: 2);
+      chain = FFT({ LocalBuf(2048) } ! 2, in);
+      onset = Onsets.kr(chain, odftype: 'rcomplex');
+      trig = Impulse.kr(rate, mul: EnvGen.kr(Env.linen(sustainTime: 0.15, releaseTime: 0.15), onset));
+      # freq, confidence = FluidPitch.kr(in, unit: 1, minFreq: 40);
+      SendReply.kr(trig: trig, cmdName: '/transcribe', values: [freq, confidence]);
+      Out.ar(0, in);
+    }).add;
+
   }
 
 
@@ -66,7 +76,7 @@ Transcription {
     o = o.add(OSCFunc({|n| n.postln; }, \pause));
   }
 
-  bufAnalyzePitches = { |buf| // with help from Owen Green (https://discourse.flucoma.org/t/transcription-use-case/1051/10)
+  bufAnalyzePitches { |buf| // with help from Owen Green (https://discourse.flucoma.org/t/transcription-use-case/1051/10)
     //Set up some variables
     var meanPitches = FluidDataSet.new(s);//we'll keep our data in here while we process
     var onsetsBuffer = Buffer.new; //this will be our onset positions

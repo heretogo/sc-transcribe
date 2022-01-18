@@ -9,10 +9,9 @@ Transcription {
 
   init {
     s.waitForBoot {
-      "Initialize Main NewClass".postln;
+      "Initializing % Class".format(this.class).postln;
       Task {
         reaper = NetAddr("127.0.0.1", 8000); s.sync;
-        "loading controllers".postln;
         out = MIDIOut.newByName(deviceName ? "IAC Driver", portName ? "Bus 1", false);
         this.loadSynthDefs; s.sync;
         this.registerOSCFuncs; s.sync;
@@ -21,7 +20,6 @@ Transcription {
   }
 
   loadSynthDefs {
-    "Loading SynthDefs".postln;
 
     (
       SynthDef(\pitchfollower, { |out, vol=1.0, buf|
@@ -60,7 +58,6 @@ Transcription {
 
 
   registerOSCFuncs {
-    "registerOSCFuncs SendReply".postln;
     o = nil;
     o = o.add(OSCdef(\transcribe, {|msg|
       var pitch = msg[3];
